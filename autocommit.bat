@@ -26,7 +26,7 @@ git branch -M main
 git push -u origin main
 
 echo Completed loop: %count%
-echo restarting
+echo restarting-30sec
 
 ::确定两次提交之间的时间，目前是每 30 秒一次，您可以更改它！ 
 TIMEOUT 30
