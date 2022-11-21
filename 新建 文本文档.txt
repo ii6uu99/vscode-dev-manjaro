@@ -4,4 +4,13 @@ git rm --cached git2.bat
 git rm --cached git3.bat
 
 
+1-清楚所有文件的缓存
+git rm --cached *
+
+
+2-创建.gitignore，指定忽略的文件
+
+3-再上传
+
+
 
