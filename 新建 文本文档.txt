@@ -1,1 +1,5 @@
-杀杀杀
+如果想要忽略已检入的文件，则必须在添加忽略该文件的规则之前取消跟踪它。 从终端取消跟踪文件。
+git rm --cached git1.bat
+git rm --cached git2.bat
+git rm --cached git3.bat
+
