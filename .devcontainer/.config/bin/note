@@ -1,0 +1,4 @@
+
+echo "正在打开jupyter notebook"
+# --notebook-dir=/notebooks
+`which jupyter-notebook` --allow-root --no-browser --ip='*' --port=8888 --NotebookApp.token=''

@@ -1,0 +1,15 @@
+yes | sudo pacman -S picom
+mkdir -p ~/.config/picom
+
+cat > /home/ming/.config/picom/picom.conf <<EOF
+ blur:
+{
+  method = "dual_kawase";
+  size = 10;
+  strength = 3;
+  deviation = 5.0;
+};
+
+EOF
+
+

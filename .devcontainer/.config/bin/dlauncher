@@ -1,0 +1,152 @@
+#!/bin/bash
+#获取所有应用程序的列表
+
+# DLauncher
+# Requires: yad, coreutils, grep, gawk, sed, bash, findutils, fonts-noto-color-emoji, procps
+# declaring variables
+export IFS=$'\r\n'
+export YAD_PID=$!
+export CATNAME=''
+export CATTITLE=''
+export YAD_OPTIONS="--center --align=center --text-align=center --buttons-layout=center"
+# toggle open/close
+if [[ ! -z $( ps aux | grep "[y]ad --title=DLauncher" ) ]]; then
+    pkill -f "yad --title=DLauncher" # if it's running then close it
+    exit 1
+fi
+# run function
+function runapp() {
+    awk '/^Exec=/ {sub("^Exec=", ""); gsub(" ?%[cDdFfikmNnUuv]", ""); exit system($0)}' \
+    $(cat /tmp/dlauncherapptorun | awk '{print $2}' | awk 'END{print $1}') & \
+    kill $YAD_PID
+    pkill -f "yad --title=DLauncher"
+    exit
+    }
+export -f runapp
+# Accessories
+function categories() {
+    IFS=$'\r\n'
+    # get category list
+    egrep -r "$CATNAME;" \
+    $(find $HOME/.local/share/applications \
+    /usr/local/share/applications \
+    /usr/share/applications -iname "*.desktop") | \
+    awk -F':Categories' '{print $1}' | \
+    awk -F':Keyword' '{print $1}' > /tmp/dlauncherCATPATH
+    # sort the paths by the basename
+    dlcatarray=( $(cat /tmp/dlauncherCATPATH) )
+    printf '%s\n' "${dlcatarray[@]}" | \
+    awk '{ print $NF, $0 }' FS='/' OFS='/' | \
+    sort | cut -d'/' -f2- | sed 's/^/"/;s/$/"/' > /tmp/dlauncherCATPATH_SORTED
+    # print only the names without .desktop and paths
+    egrep -r "$CATNAME;" \
+    $(find $HOME/.local/share/applications \
+    /usr/local/share/applications \
+    /usr/share/applications -iname "*.desktop") | \
+    sed 's:.*/::' | sort | sed 's/\.[^.]*$//' | sed 's/^/"/;s/$/"/' > /tmp/dlauncherCATNAME
+    # application names list dialog
+    IFS=$'"'
+    yad \
+    --list \
+    --no-click \
+    --no-markup \
+    --no-escape \
+    --width=700 \
+    --height=500 \
+    --no-headers \
+    --separator='' \
+    --print-column=4 \
+    --grid-lines=both \
+    --title=$CATTITLE \
+    --select-action="echo" > /tmp/dlauncherapptorun \
+    --dclick-action="DLAUNCHERRUNNING" \
+    --column '' \
+    --column=$"Launchers Names" \
+    --column '' \
+    --column=$"Path" \
+    --button=$"⚙️ Run Selected":"bash -c runapp" \
+    --button=$"✖ Close":1 \
+    $(paste -d" " /tmp/dlauncherCATNAME /tmp/dlauncherCATPATH_SORTED)
+    exit
+    }
+export -f categories
+# show all function
+function showall() {
+    IFS=$'"'
+    # print desktop files with paths
+    find $HOME/.local/share/applications \
+    /usr/local/share/applications \
+    /usr/share/applications -iname "*.desktop" > /tmp/dlauncherPATH_UNSORTED
+    # sort the paths by the basename
+    patharray=( $(cat /tmp/dlauncherPATH_UNSORTED) )
+    printf '%s\n' "${patharray[@]}" | \
+    awk '{ print $NF, $0 }' FS='/' OFS='/' | \
+    sort | cut -d'/' -f2- | sed 's/^/"/;s/$/"/' > /tmp/dlauncherPATH_SORTED
+    # print only the names without .desktop and paths
+    find $HOME/.local/share/applications \
+    /usr/local/share/applications \
+    /usr/share/applications -iname "*.desktop" | \
+    sed 's:.*/::' | sort | sed 's/\.[^.]*$//' | sed 's/^/"/;s/$/"/' > /tmp/dlauncherNAME
+    # application names list dialog
+    yad \
+    --list \
+    --no-click \
+    --no-markup \
+    --no-escape \
+    --height=700 \
+    --no-headers \
+    --separator='' \
+    --print-column=4 \
+    --grid-lines=both \
+    --title="All Applications" \
+    --select-action="echo" > /tmp/dlauncherapptorun \
+    --dclick-action="DLAUNCHERRUNNING" \
+    --column '' \
+    --column=$"Launchers Names" \
+    --column '' \
+    --column=$"Path" \
+    --button=$"⚙️ Run Selected":"bash -c runapp" \
+    --button=$"🧭 Accessories":'bash -c "export CATNAME=Utility && export CATTITLE=Accessories && categories"' \
+    --button=$"📦 Development":'bash -c "export CATNAME=Development && export CATTITLE=Development && categories"' \
+    --button=$"🧸 Games":'bash -c "export CATNAME=Game && export CATTITLE=Games && categories"' \
+    --button=$"✏️ Graphics":'bash -c "export CATNAME=Graphics && export CATTITLE=Graphics && categories"' \
+    --button=$"📡 Internet":'bash -c "export CATNAME=Network && export CATTITLE=Internet && categories"' \
+    --button=$"🖥️ Multimedia":'bash -c "export CATNAME=AudioVideo && export CATTITLE=Multimedia && categories"' \
+    --button=$"📚 Office":'bash -c "export CATNAME=Office && export CATTITLE=Office && categories"' \
+    --button=$"🪟 Settings":'bash -c "export CATNAME=Settings && export CATTITLE=Settings && categories"' \
+    --button=$"🛡️ System":'bash -c "export CATNAME=System && export CATTITLE=System && categories"' \
+    --button=$"✖ Close":1 \
+    $(paste -d" " /tmp/dlauncherNAME /tmp/dlauncherPATH_SORTED)
+    exit
+    }
+export -f showall
+# main dialog
+appname=$(yad --title='DLauncher (Search Application Name)' \
+    --form \
+    --width=400 \
+    --undecorated \
+    --separator='' \
+    --item-separator='\n' \
+    --button=$"✔ Show All Applications":"bash -c showall" \
+    --field=:CE \
+    "$(egrep -r 'Name' $HOME/.local/share/applications/* \
+    /usr/local/share/applications/* /usr/share/applications/* | \
+    grep -F -v "Name[" | \
+    grep -F -v "#" | \
+    grep -F -w Name | \
+    sed 's:.*=::' | \
+    awk '{$1=$1;print}' | \
+    awk 'BEGIN{printf("\n")}1' | \
+    awk 'END{printf("\n")}1' | \
+    sed '1s/^/"/;$s/$/"/')")
+    # exit on close
+    [ $? -ne 0 ] && exit 1
+    # executes the .desktop file
+    awk '/^Exec=/ {sub("^Exec=", ""); gsub(" ?%[cDdFfikmNnUuv]", ""); exit system($0)}' \
+    $(egrep -r "$appname" $HOME/.local/share/applications/* \
+    /usr/local/share/applications/* /usr/share/applications/* | \
+    grep -F -v "Name[" | \
+    grep -F -v "#" | \
+    grep -F -w -m1 "Name" | \
+    sed 's/\:.*$//')
+    exit

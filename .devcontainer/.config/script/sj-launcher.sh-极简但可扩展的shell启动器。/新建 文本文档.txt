@@ -1,0 +1,5 @@
+https://github.com/seju-v/sj-launcher.sh
+
+
+gen-apps 生成app
+launcher 运行

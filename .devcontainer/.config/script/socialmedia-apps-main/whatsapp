@@ -1,0 +1,3 @@
+
+#!/bin/zsh
+exec /usr/lib/brave-bin/brave --password-store=basic --app=https://web.whatsapp.com/

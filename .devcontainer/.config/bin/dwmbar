@@ -1,0 +1,102 @@
+#!/bin/sh
+#https://github.com/TarebossT/dwmbar
+update_hdd () { 
+	hdd="$(df -h | grep '/run/media' | awk '{ print $4 "/" $2 }')"
+}
+
+update_mem () { 
+	mem1="$(free -h --kilo | awk '/^Mem:/ {print $3 "/" $2}')"
+	mem2="$(free -t | awk 'NR == 2 {printf("%.0f%"), $3/$2*100}')"
+}
+
+update_cpu_usg () { 
+	cpu_usg="$(top -bn 1 | awk '/^%Cpu/ {printf "%.f%%\n", $2+$4+$6}')"	
+}
+
+update_cpu_temp () { 
+	cpu_temp="$(head -c 2 /sys/class/thermal/thermal_zone0/temp)°C"
+}
+
+update_bright () { 
+	bright="$(xbacklight -get | cut -f1 -d '.')%"
+}
+
+update_vol () { 
+        muted="$(pactl list sinks | awk '/Mute:/ { print $2 }')"
+	vol="$(pamixer --get-volume)"
+	if [ "$muted" = "yes" ]; then
+		icon="muted/"
+	else
+		if [ "$vol" -gt 75 ]; then
+			icon=""
+		elif [ "$vol" -gt 50 ]; then
+			icon=""
+		elif [ "$vol" -gt 0 ]; then
+			icon=""
+		fi
+	fi
+}
+
+update_time () { 
+	time="$(date "+%a %d.%m.%Y %R")"
+}
+
+update_bat () { 
+	# you might need to change the path depending on your device
+	read -r bat_status </sys/class/power_supply/BAT0/status
+	read -r bat_capacity </sys/class/power_supply/BAT0/capacity
+	if [ "$bat_status" = "Charging" ]; then
+		bat_status=""
+	elif [ "$bat_status" = "Full" ]; then
+		bat_status=""
+	elif [ "$bat_capacity" -gt 80 ]; then
+		bat_status=""
+	elif [ "$bat_capacity" -gt 60 ]; then
+		bat_status=""
+	elif [ "$bat_capacity" -gt 40 ]; then
+		bat_status=""
+	elif [ "$bat_capacity" -gt 25 ]; then
+		bat_status=""
+	else 
+		bat_status=""
+	fi
+	bat="$bat_status$bat_capacity%"
+}
+
+update_wifi () {
+	read -r wifi_status </sys/class/net/wlan0/operstate 
+        if [ "$wifi_status" = "down" ]; then
+		wifi_status="wifi down"
+	elif [ "$wifi_status" = "up" ]; then	 
+		wifi_status="$(nmcli -g IN-USE,SSID,SIGNAL device wifi | awk '/^*/' | awk -F '[:]' '{print $2 "("$3"%)"}') $(ip route get 1.2.3.4 | awk '/ via / {print $3; exit;}')"
+	else
+		wifi_status="no wifi"
+	fi
+	wifi="$wifi_status"
+}
+
+display () { 
+	xsetroot -name "$hdd $mem1($mem2) $cpu_usg $cpu_temp $bright $icon$vol% $time $wifi"
+}
+
+while true
+do
+	sleep 1 &
+  wait && { 
+		# to update item ever n seconds with a offset of m
+		## [ $((sec % n)) -eq m ] && udpate_item
+		[ $((sec % 18)) -eq 0 ] && update_hdd		
+		[ $((sec % 16)) -eq 0 ] && update_mem
+		[ $((sec % 14)) -eq 0 ] && update_cpu_usg
+		[ $((sec % 15)) -eq 0 ] && update_cpu_temp		
+		[ $((sec % 7)) -eq 0 ] && update_bright
+		#[ $((sec % 5)) -eq 0 ] && update_vol							
+#		[ $((sec % 10 )) -eq 0 ] && update_bat
+		[ $((sec % 30 )) -eq 0 ] && update_time
+		#[ $((sec % 12)) -eq 0 ] && update_wifi		
+
+		# how often the display updates ( 5 seconds )
+		[ $((sec % 5 )) -eq 0 ] && display
+		sec=$((sec + 1))
+	}
+done

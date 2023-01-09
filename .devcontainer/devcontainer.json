@@ -1,0 +1,113 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.202.3/containers/python-3
+{
+	"name": "Python3-archlinux",
+	
+	//指定镜像的名称
+	"image":"vscode-archlinux",
+	//超级权限
+	//docker run -it --privileged=true --entrypoint /sbin/init --name vscode-arch vscode-archlinux
+	//查看是否有系统权限 systemctl
+
+      // 容器包含的文件目录
+	"context": "..",
+
+       // Dockerfile 相对于本文件路径
+	"dockerFile": "./Dockerfile",
+
+	//"appPort": [ 4000 ],
+	//,"--ENTRYPOINT='/sbin/init'"    "--entrypoint","/sbin/init"
+         "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined","--privileged=true"],
+
+	//可以使用--entrypoint
+	//"overrideCommand": false,
+
+	//工作目录
+	//"workspaceFolder": "/wkspace",
+
+	// 配置特定于工具的属性
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": {
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "/bin/bash"
+					}
+				},
+				"python.defaultInterpreterPath": "/usr/local/bin/python",
+				"python.languageServer": "Default",
+				"python.linting.enabled": true,
+				"python.linting.pylintEnabled": true,
+				"python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
+				"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+				"python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+				"python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+				"python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+				"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+				"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+				"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+				"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
+			},
+			// 在创建容器时添加要安装的扩展的 ID
+			"extensions": [
+				"formulahendry.code-runner",
+				"esbenp.prettier-vscode",
+				// git
+				"eamodio.gitlens",
+				"michelemelluso.gitignore",
+				// ide
+				"usernamehw.errorlens",  //错误提示，设置--typescript local--改为cn语言
+				"Gruntfuggly.todo-tree",
+				"streetsidesoftware.code-spell-checker",
+				"oderwat.indent-rainbow",
+				"spmeesseman.vscode-taskexplorer",
+				// markdown
+				"yzhang.markdown-all-in-one",
+				"DavidAnson.vscode-markdownlint",
+				"shd101wyy.markdown-preview-enhanced",
+				// python
+				"almenon.arepl",   //实时代码调试器
+				"ms-python.python",
+				"njqdev.vscode-python-typehint",
+				"ms-python.vscode-pylance",
+				"njpwerner.autodocstring",  //Python文档字符串生成器
+				"aaron-bond.better-comments",  //创建更人性化的注释
+				"LittleFoxTeam.vscode-python-test-adapter",  //测试资源管理器
+				"frhtylcn.pythonsnippets",  //代码片段
+				// shell
+				"rogalmic.bash-debug",
+				"timonwong.shellcheck",
+				"mads-hartmann.bash-ide-vscode",
+				"foxundermoon.shell-format",
+				// toml
+				"bungcip.better-toml",
+				// yaml
+				"redhat.vscode-yaml"
+			]
+		}
+	},
+	// 使用“转发端口”在本地提供容器中的端口列表
+	 "forwardPorts": [4000,22,8888],
+
+	//挂载目录
+	 "mounts": [
+		// "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,consistency=cached"
+	  ],
+	
+	// Use 'portsAttributes' to set default properties for specific forwarded ports. More info: https://code.visualstudio.com/docs/remote/devcontainerjson-reference.
+	"portsAttributes": {
+		"4000": {
+			"label": "4001"
+		}
+	},
+	// Use 'otherPortsAttributes' to configure any ports that aren't configured using 'portsAttributes'.
+	// "otherPortsAttributes": {
+	// 		"onAutoForward": "silent"
+	// },
+	// 使用“ postCreateCommand”在创建容器后运行命令
+	"postCreateCommand": "bash ./.devcontainer/postCreateCommand.sh",
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "root"
+}

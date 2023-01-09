@@ -1,0 +1,2 @@
+alias csd='cd'
+alias cd6='cd /etc/'

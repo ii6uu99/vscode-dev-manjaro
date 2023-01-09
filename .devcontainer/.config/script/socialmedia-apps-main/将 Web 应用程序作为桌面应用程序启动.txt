@@ -1,0 +1,6 @@
+安装brave
+pacman -S brave-browser
+
+
+
+https://github.com/PTrixi/socialmedia-apps

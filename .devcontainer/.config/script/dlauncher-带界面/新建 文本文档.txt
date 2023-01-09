@@ -1,0 +1,13 @@
+https://github.com/DiogenesVX/dlauncher
+
+
+sudo pacman -S yad
+
+快速搜索并运行安装在系统上的任何应用程序。
+获取所有应用程序的列表。
+获取按类别示例的应用程序列表。
+
+
+  set $menu /opt/dlauncher/dlauncher | xargs swaymsg exec --
+  bindsym $mod+space exec $menu ### my combination is $mod+space, you can choose any
+  for_window [app_id="(?i)yad"] floating enable

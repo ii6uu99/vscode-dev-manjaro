@@ -1,0 +1,14 @@
+
+#shell脚本判断当前是否是root用户并退出shell程序
+if [ `whoami` = "root" ];then
+    echo "当前用户是root，退出程序，换成普通用户"
+    exit
+fi
+
+
+git clone https://github.com/jotyGill/ezsh
+cd ezsh
+yes | ./install.sh -c
+chsh -s /bin/zsh
+
+

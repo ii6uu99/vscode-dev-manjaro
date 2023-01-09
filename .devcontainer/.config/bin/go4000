@@ -1,0 +1,6 @@
+echo "正在打开nomachine远程桌面"
+
+/etc/NX/nxserver --startup
+tail -f /usr/NX/var/log/nxserver.log
+
+

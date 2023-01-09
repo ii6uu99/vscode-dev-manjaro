@@ -1,0 +1,2 @@
+echo "设置背景"
+feh --no-fehbg --bg-fill '/home/ming/workspace/.config/picture/1.png

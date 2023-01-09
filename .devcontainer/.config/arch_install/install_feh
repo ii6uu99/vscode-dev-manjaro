@@ -1,0 +1,7 @@
+
+
+pacman -S feh
+#yes | yay -S feh
+git clone https://github.com/Vincchy/wall.git /home/ming/wallpaper
+feh --no-fehbg --bg-fill '/home/ming/wallpaper/graffiti.jpg'
+

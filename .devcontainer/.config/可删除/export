@@ -1,0 +1,14 @@
+#这里定义一些参数
+
+cat > /etc/profile.d/alias.sh <<EOF
+
+USER="ming"
+
+
+EOF
+
+#重启shell
+source /home/$USER/.bashrc
+source /home/$USER/.zshrc
+
+

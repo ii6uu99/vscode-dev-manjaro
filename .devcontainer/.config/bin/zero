@@ -1,0 +1,10 @@
+#
+echo "开启zerotier端口"
+zerotier-one -d
+
+#
+echo "正在加入zerotier网络"
+zerotier-cli join b15644912e556725
+
+
+

@@ -1,0 +1,3 @@
+alias brails='bundle exec rails'
+alias berc='brails c'
+alias bers='brails s'

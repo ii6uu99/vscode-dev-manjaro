@@ -1,0 +1,12 @@
+#----------------------------------------------------------
+#在docker上安装docker
+ARG DEV_CONFIG_PATH='undefined'
+ARG ENABLE_NONROOT_DOCKER='true'
+ARG ADD_PATH="./.devcontainer/.config/arch_install/10_arch_install_docker"
+ARG TO_PATH="/tmp/install_docker"
+ADD ${ADD_PATH} ${TO_PATH}
+ENV STUB_PATH="${TO_PATH}"
+RUN chmod 777 ${TO_PATH}/docker-from-docker.sh && \
+ bash "${TO_PATH}/docker-from-docker.sh" "${USERNAME}" "${DEV_CONFIG_PATH}" "${ENABLE_NONROOT_DOCKER}"
+
+

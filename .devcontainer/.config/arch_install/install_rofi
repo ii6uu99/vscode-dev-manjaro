@@ -1,0 +1,65 @@
+
+#shell脚本判断当前是否是root用户并退出shell程序
+if [ `whoami` = "root" ];then
+        echo "当前用户是root，退出程序，换成普通用户"
+        exit
+fi
+
+
+
+yes | sudo pacman -S rofi
+mkdir -p /home/ming/.config/rofi
+git clone https://github.com/skyler544/rofi-launcher.git /home/ming/.config/rofi
+
+
+cat > /home/ming/.config/rofi/config.rasi <<EOF
+configuration {
+kb-accept-entry: "Return";
+kb-remove-to-eol: "";
+kb-row-up: "Up,Control+k";
+kb-row-down: "Down,Control+j";
+}
+@theme "snow-storm"
+
+EOF
+
+
+
+# 很多主题
+# https://github.com/raven2cz/rofi-themes
+
+# git clone https://github.com/raven2cz/rofi-themes.git /home/ming/.config
+
+
+#--------------------------------------------------------
+
+
+
+
+#使用 mpv 和 rofi 启动器 观看 youtube 视频（当然没有广告）
+#https://github.com/ashish-patwal/RofiYoutube
+
+
+
+#普通用户运行
+#安装rofi
+#yes | yay -S aura
+#yes | sudo pacman -S meson
+#sudo aura -Acax --noconfirm rofi-lbonn-wayland-git
+
+
+
+
+
+
+
+#打印机rofi脚本
+#https://github.com/raphaelfournier/rofi-printers
+
+
+#网络搜索 https://github.com/miroslavvidovic/rofi-scripts
+# sudo chmod 777 ./web-search.sh
+# sudo cp ./web-search.sh /usr/local/bin
+
+
+

@@ -1,0 +1,7 @@
+echo "xrandr -s 1920x1080" > /etc/profile.d/big.sh
+echo "/etc/NX/nxserver --startup" > /etc/profile.d/nomachine.sh
+source /etc/profile
+
+
+
+
